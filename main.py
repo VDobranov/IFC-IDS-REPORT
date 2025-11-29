@@ -185,7 +185,7 @@ def main(page: ft.Page):
     ids_upload_btn = ft.ElevatedButton("Upload IDS file", on_click=on_upload_ids)
 
     # Run report action: will use ifctester to check IFC against IDS and produce the chosen report
-    def run_report(e: ft.ControlEvent):
+    async def run_report(e: ft.ControlEvent):
         nonlocal current_ifc_path, current_ids_path, current_ids_text
         if not current_ifc_path:
             results.controls.append(ft.Text("No IFC file uploaded. Please upload an IFC model first."))
@@ -200,13 +200,42 @@ def main(page: ft.Page):
         results.controls.append(ft.Text(f"Running report: {sel} — this may take a moment..."))
         page.update()
 
+        # Try desktop imports first; on web (pyodide) fallback to micropip installing WASM wheel
         try:
             import ifctester
             import ifcopenshell as _ifc
-        except Exception as ex:
-            results.controls.append(ft.Text(f"Failed to import dependencies: {ex}"))
-            page.update()
-            return
+        except Exception:
+            try:
+                # micropip exists only in Pyodide/browser environments
+                import importlib
+                import micropip
+                results.controls.append(ft.Text("Installing WASM ifcopenshell in browser (micropip)..."))
+                page.update()
+                # URL provided for on-prem / local-hosted wheel — install it in-browser
+                wasm_wheel = "https://ifcopenshell.github.io/wasm-wheels/ifcopenshell-0.8.3+34a1bc6-cp313-cp313-emscripten_4_0_9_wasm32.whl"
+                try:
+                    await micropip.install(wasm_wheel)
+                except Exception:
+                    # try installing just the package name as a fallback
+                    try:
+                        await micropip.install("ifcopenshell")
+                    except Exception:
+                        pass
+                # try to install ifctester too (pure-python)
+                try:
+                    await micropip.install("ifctester")
+                except Exception:
+                    pass
+                # reload modules
+                ifctester = importlib.import_module("ifctester")
+                _ifc = importlib.import_module("ifcopenshell")
+                # also bind ifcopenshell name used below
+                import sys
+                sys.modules["ifcopenshell"] = _ifc
+            except Exception as ex:
+                results.controls.append(ft.Text(f"Failed to load wasm/browser dependencies: {ex}"))
+                page.update()
+                return
 
         # Parse IDS and open IFC model
         try:
