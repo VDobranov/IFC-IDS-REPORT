@@ -6,7 +6,7 @@ def main(page: ft.Page):
 	txt = ft.Text("Hello, Flet!")
 	tf = ft.TextField(label="Type your name")
 
-	def on_click(e):
+	def on_click(e):\
 		# tf.value may be None; coerce to empty string before strip
 		name = (tf.value or "").strip() or "World"
 		txt.value = f"Hello, {name}!"
