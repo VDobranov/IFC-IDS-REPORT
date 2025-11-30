@@ -361,7 +361,8 @@ def main(page: ft.Page):
             results.controls.append(ft.Text("Installing WASM ifcopenshell in browser (micropip)..."))
             page.update()
             # URL provided for on-prem / local-hosted wheel — install it in-browser
-            wasm_wheel = "https://ifcopenshell.github.io/wasm-wheels/ifcopenshell-0.8.3+34a1bc6-cp313-cp313-emscripten_4_0_9_wasm32.whl"
+            # wasm_wheel = "https://ifcopenshell.github.io/wasm-wheels/ifcopenshell-0.8.3+34a1bc6-cp313-cp313-emscripten_4_0_9_wasm32.whl"
+            wasm_wheel = "https://ifcopenshell.github.io/wasm-wheels/ifcopenshell-0.8.2+d50e806-cp312-cp312-emscripten_3_1_58_wasm32.whl"
             try:
                 await micropip.install(wasm_wheel)
             except Exception as ex:
