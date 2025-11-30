@@ -2,7 +2,7 @@ import os
 import tempfile
 import flet as ft
 
-import ifcopenshell
+# import ifcopenshell
 
 
 def main(page: ft.Page):

@@ -38,7 +38,7 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Build web (produce ./dist/ or ./docs/)
+      - name: Build web (produce ./dist/)
         run: |
           chmod +x ./scripts/build_web.sh || true
           ./scripts/build_web.sh
@@ -47,10 +47,8 @@ jobs:
         run: |
           echo "Contents of workspace root:"
           ls -la
-          echo "Contents of dist (if present):"
+          echo "Contents of dist:"
           ls -la ./dist || true
-          echo "Contents of docs (fallback):"
-          ls -la ./docs || true
 
       - name: Verify `./dist` exists (strict)
         run: |
