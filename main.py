@@ -203,7 +203,7 @@ def main(page: ft.Page):
         # Try desktop imports first; on web (pyodide) fallback to micropip installing WASM wheel
         try:
             import ifctester
-            import ifcopenshell as _ifc
+            # import ifcopenshell as _ifc
         except Exception:
             try:
                 # micropip exists only in Pyodide/browser environments
@@ -228,7 +228,7 @@ def main(page: ft.Page):
                     pass
                 # reload modules
                 ifctester = importlib.import_module("ifctester")
-                _ifc = importlib.import_module("ifcopenshell")
+                # _ifc = importlib.import_module("ifcopenshell")
                 # also bind ifcopenshell name used below
                 import sys
                 sys.modules["ifcopenshell"] = _ifc
