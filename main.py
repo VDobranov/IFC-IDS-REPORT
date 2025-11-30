@@ -79,7 +79,7 @@ def main(page: ft.Page):
                 # try to parse basic info with ifcopenshell
                 entity_count = None
                 try:
-                    model = ifcopenshell.open(path)
+                    model = ios.open(path)
                     try:
                         entity_count = sum(1 for _ in model)
                     except Exception:
@@ -203,7 +203,7 @@ def main(page: ft.Page):
         # Try desktop imports first; on web (pyodide) fallback to micropip installing WASM wheel
         try:
             import ifctester
-            # import ifcopenshell as _ifc
+            # import ifcopenshell as ios
         except Exception:
             try:
                 # micropip exists only in Pyodide/browser environments
@@ -219,19 +219,21 @@ def main(page: ft.Page):
                     # try installing just the package name as a fallback
                     try:
                         await micropip.install("ifcopenshell")
-                    except Exception:
-                        pass
+                    except Exception as ex:
+                        results.controls.append(ft.Text(f"Failed to load ifcopenshell: {ex}"))
+                        page.update()
                 # try to install ifctester too (pure-python)
                 try:
                     await micropip.install("ifctester")
-                except Exception:
-                    pass
+                except Exception as ex:
+                    results.controls.append(ft.Text(f"Failed to load ifctester: {ex}"))
+                    page.update()
                 # reload modules
                 ifctester = importlib.import_module("ifctester")
-                # _ifc = importlib.import_module("ifcopenshell")
+                ios = importlib.import_module("ifcopenshell")
                 # also bind ifcopenshell name used below
                 import sys
-                sys.modules["ifcopenshell"] = _ifc
+                sys.modules["ifcopenshell"] = ios
             except Exception as ex:
                 results.controls.append(ft.Text(f"Failed to load wasm/browser dependencies: {ex}"))
                 page.update()
@@ -246,7 +248,7 @@ def main(page: ft.Page):
             return
 
         try:
-            model = ifcopenshell.open(current_ifc_path)
+            model = ios.open(current_ifc_path)
         except Exception as ex:
             results.controls.append(ft.Text(f"Failed to open IFC model: {ex}"))
             page.update()
@@ -351,14 +353,54 @@ def main(page: ft.Page):
         results.controls.append(ft.Text("Selected report type not implemented."))
         page.update()
 
+    async def load_modules(e: ft.ControlEvent):
+        try:
+            # micropip exists only in Pyodide/browser environments
+            import importlib
+            import micropip
+            results.controls.append(ft.Text("Installing WASM ifcopenshell in browser (micropip)..."))
+            page.update()
+            # URL provided for on-prem / local-hosted wheel — install it in-browser
+            wasm_wheel = "https://ifcopenshell.github.io/wasm-wheels/ifcopenshell-0.8.3+34a1bc6-cp313-cp313-emscripten_4_0_9_wasm32.whl"
+            try:
+                await micropip.install(wasm_wheel)
+            except Exception as ex:
+                results.controls.append(ft.Text(f"Failed to load WASM ifcopenshell: {ex}", selectable=True))
+                results.controls.append(ft.Text("Installing usual ifcopenshell (micropip)..."))
+                page.update()
+                try:
+                    await micropip.install("ifcopenshell")
+                except Exception as ex:
+                    results.controls.append(ft.Text(f"Failed to load ifcopenshell: {ex}"))
+                    page.update()
+            # try to install ifctester too (pure-python)
+            try:
+                await micropip.install("ifctester")
+            except Exception as ex:
+                results.controls.append(ft.Text(f"Failed to load ifctester: {ex}"))
+                page.update()
+            # reload modules
+            ifctester = importlib.import_module("ifctester")
+            ios = importlib.import_module("ifcopenshell")
+            # also bind ifcopenshell name used below
+            import sys
+            sys.modules["ifcopenshell"] = ios
+        except Exception as ex:
+            results.controls.append(ft.Text(f"Failed to load wasm/browser dependencies: {ex}"))
+            page.update()
+            return
+
     run_report_btn = ft.ElevatedButton("Run report", on_click=run_report)
+
+    load_modules_btn = ft.ElevatedButton("Load ifcopenshell", on_click=load_modules)
 
     # Simple instructions
     instructions = ft.Text("Click 'Upload IFC file' (*.ifc) and 'Upload IDS file' (*.ids, *.xml).")
 
     page.add(
         header,
-        report_dropdown,
+        # report_dropdown,
+        load_modules_btn,
         instructions,
         upload_btn,
         ifc_label,
