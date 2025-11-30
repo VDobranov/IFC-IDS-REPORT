@@ -3,9 +3,6 @@ import sys
 import tempfile
 import flet as ft
 
-# import ifcopenshell
-
-
 
 def main(page: ft.Page):
 	page.title = "IFC-IDS Report"
@@ -34,9 +31,12 @@ def main(page: ft.Page):
 				page.update()
 			# reload modules
 			# ifctester = importlib.import_module("ifctester")
+
 			ios = importlib.import_module("ifcopenshell")
 			# also bind ifcopenshell name used below
 			sys.modules["ifcopenshell"] = ios
+			results.controls.append(ft.Text(f"Ifcopenshell Version: {ios.__version__}"))
+			page.update()
 		except Exception as ex:
 			results.controls.append(ft.Text(f"Failed to load wasm/browser dependencies: {ex}"))
 			page.update()
