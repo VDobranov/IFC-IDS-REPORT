@@ -37,6 +37,7 @@ def main(page: ft.Page):
 			# also bind ifcopenshell name used below
 			sys.modules["ifcopenshell"] = ios
 			results.controls.append(ft.Text(f"Ifcopenshell Version: {ios.__version__}"))
+			print(f"Ifcopenshell Version: {ios.__version__}")
 			load_modules_btn.visible = False
 			page.update()
 		except Exception as ex:
@@ -46,9 +47,29 @@ def main(page: ft.Page):
 
 	load_modules_btn = ft.ElevatedButton("Load ifcopenshell", on_click=load_modules)
 
+	def pick_files_result(e: ft.FilePickerResultEvent):
+		selected_files.value = (
+			", ".join(map(lambda f: f.name, e.files)) if e.files else "Cancelled!"
+		)
+		selected_files.update()
+
+	ifc_picker = ft.FilePicker(on_result=pick_files_result)
+	selected_files = ft.Text()
+	page.overlay.append(ifc_picker)
+	
+	ifc_picker_btn = ft.ElevatedButton(
+		"Pick files",
+		icon=ft.Icons.UPLOAD_FILE,
+		on_click=lambda _: ifc_picker.pick_files(
+			allow_multiple=True
+		),
+	)
+
 	page.add(
 		header,
 		load_modules_btn,
+		ifc_picker_btn,
+		selected_files,
 		results
 	)
 
