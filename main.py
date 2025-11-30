@@ -28,8 +28,8 @@ def main(page: ft.Page):
 				await micropip.install(wasm_wheel)
 			except Exception as ex:
 				results.controls.append(ft.Text(f"Failed to load WASM ifcopenshell: {ex}", selectable=True))
-				page.update()
-				return
+				results.controls.append(ft.Text(f"Trying to load usual ifcopenshell"))
+
 			# reload modules
 			# ifctester = importlib.import_module("ifctester")
 
