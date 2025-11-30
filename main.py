@@ -29,6 +29,7 @@ def main(page: ft.Page):
 			except Exception as ex:
 				results.controls.append(ft.Text(f"Failed to load WASM ifcopenshell: {ex}", selectable=True))
 				page.update()
+				return
 			# reload modules
 			# ifctester = importlib.import_module("ifctester")
 
@@ -36,6 +37,7 @@ def main(page: ft.Page):
 			# also bind ifcopenshell name used below
 			sys.modules["ifcopenshell"] = ios
 			results.controls.append(ft.Text(f"Ifcopenshell Version: {ios.__version__}"))
+			load_modules_btn.visible = False
 			page.update()
 		except Exception as ex:
 			results.controls.append(ft.Text(f"Failed to load wasm/browser dependencies: {ex}"))
