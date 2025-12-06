@@ -44,15 +44,22 @@ async def main(page: ft.Page):
 		page.update()
 		
 		try:
-			status.value += "\nИмпортирую модули ifcopenshell и ifctester..."
+			status.value += "\nИмпортирую модуль ifcopenshell..."
 			page.update()
 			import ifcopenshell
-			import ifctester
 			ifc_file = ifcopenshell.file()
-			status.value += "\nСоздан пустой IFC-файл."
+			status.value += "\nМодуль ifcopenshell импортирован."
+		except Exception as e:
+			status.value += "\nВозникла ошибка при импорте модуля ifcopenshell: {e}."
+		page.update()
+		
+		try:
+			status.value += "\nИмпортирую модуль ifctester..."
 			page.update()
-		except:
-			pass
+			import ifctester
+			status.value += "\nМодуль ifctester импортирован."
+		except Exception as e:
+			status.value += "\nВозникла ошибка при импорте модуля ifctester: {e}."
 	await install_and_import_ifcopenshell()
 
 
