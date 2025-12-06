@@ -4,6 +4,7 @@ import tempfile
 import flet as ft
 import asyncio
 import micropip
+import ifctester
 
 
 # Browser WASM wheel URL and localStorage flag version
@@ -38,6 +39,7 @@ async def main(page: ft.Page):
 			status.value = "Устанавливаю WASM-ifcopenshell..."
 			page.update()
 			await micropip.install(WASM_WHEEL_URL)
+			await micropip.install('ifctester')
 			status.value += "\nУстановка завершена."
 		except Exception as e:
 			status.value += "\nОшибка установки."	
@@ -50,7 +52,7 @@ async def main(page: ft.Page):
 			ifc_file = ifcopenshell.file()
 			status.value += "\nМодуль ifcopenshell импортирован."
 		except Exception as e:
-			status.value += "\nВозникла ошибка при импорте модуля ifcopenshell: {e}."
+			status.value += f"\nВозникла ошибка при импорте модуля ifcopenshell: {e}."
 		page.update()
 		
 		try:
@@ -59,7 +61,9 @@ async def main(page: ft.Page):
 			import ifctester
 			status.value += "\nМодуль ifctester импортирован."
 		except Exception as e:
-			status.value += "\nВозникла ошибка при импорте модуля ifctester: {e}."
+			status.value += f"\nВозникла ошибка при импорте модуля ifctester: {e}."
+			page.update()
+	
 	await install_and_import_ifcopenshell()
 
 
