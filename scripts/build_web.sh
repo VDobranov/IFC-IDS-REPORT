@@ -45,7 +45,6 @@ if command -v flet >/dev/null 2>&1; then
 fi
 
 if [ -d "$DIST_DIR" ] && [ "$(ls -A "$DIST_DIR")" ]; then
-  cp "$ROOT_DIR/odfpy-1.4.2-py2.py3-none-any.whl" "$DIST_DIR"
   echo "Found built assets in $DIST_DIR"
   echo "Done. The Pages workflow should upload './dist/'"
   exit 0
