@@ -7,9 +7,10 @@ import micropip
 # import ifctester
 
 
-# Browser WASM wheel URL and localStorage flag version
-WASM_WHEEL_URL = "https://ifcopenshell.github.io/wasm-wheels/ifcopenshell-0.8.2+d50e806-cp312-cp312-emscripten_3_1_58_wasm32.whl"
+IFCOPENSHELL_WHEEL = "https://raw.githubusercontent.com/vdobranov/ifc-ids-report/main/wheels/ifcopenshell-0.8.2+d50e806-cp312-cp312-emscripten_3_1_58_wasm32.whl"
 WASM_INSTALL_FLAG = "ifcopenshell_wasm_installed_v1"
+
+ODFPY_WHEEL = "https://raw.githubusercontent.com/vdobranov/ifc-ids-report/main/wheels/odfpy-1.4.2-py2.py3-none-any.whl"
 
 
 async def main(page: ft.Page):
@@ -38,7 +39,7 @@ async def main(page: ft.Page):
 		try:
 			status.value = "Устанавливаю ifcopenshell:\n		"
 			page.update()
-			await micropip.install(WASM_WHEEL_URL)
+			await micropip.install(IFCOPENSHELL_WHEEL)
 			status.value += "Установка завершена."
 		except Exception as e:
 			status.value += f"Ошибка установки: {e}."
@@ -47,7 +48,7 @@ async def main(page: ft.Page):
 		try:
 			status.value += "\nУстанавливаю ifctester:\n		"
 			page.update()
-			await micropip.install("https://raw.githubusercontent.com/theseyan/ifctester-next/main/public/worker/bin/odfpy-1.4.2-py2.py3-none-any.whl")
+			await micropip.install(ODFPY_WHEEL)
 			await micropip.install('ifctester')
 			status.value += "Установка завершена."
 		except Exception as e:
