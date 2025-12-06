@@ -36,41 +36,41 @@ async def main(page: ft.Page):
 	)
 	async def install_and_import_ifcopenshell():
 		try:
-			status.value = "Устанавливаю WASM-ifcopenshell..."
+			status.value = "Устанавливаю WASM-ifcopenshell: "
 			page.update()
-			await micropip.install('ifctester')
-			status.value += "\nУстановка завершена."
+			await micropip.install(WASM_WHEEL_URL)
+			status.value += "Установка завершена."
 		except Exception as e:
-			status.value += f"\nОшибка установки: {e}."	
+			status.value += f"Ошибка установки: {e}."	
 		page.update()
 
 		try:
-			status.value = "Устанавливаю ifctester..."
+			status.value += "\nУстанавливаю ifctester: "
 			page.update()
 			await micropip.install('ifctester')
-			status.value += "\nУстановка завершена."
+			status.value += "Установка завершена."
 		except Exception as e:
-			status.value += f"\nОшибка установки: {e}."	
+			status.value += f"Ошибка установки: {e}."	
 		page.update()
 		
 		try:
-			status.value += "\nИмпортирую модуль ifcopenshell..."
+			status.value += "\nИмпортирую модуль ifcopenshell: "
 			page.update()
 			import ifcopenshell
 			ifc_file = ifcopenshell.file()
-			status.value += "\nМодуль ifcopenshell импортирован."
+			status.value += "Модуль ifcopenshell импортирован."
 		except Exception as e:
-			status.value += f"\nВозникла ошибка при импорте модуля ifcopenshell: {e}."
+			status.value += f"Возникла ошибка при импорте модуля ifcopenshell: {e}."
 		page.update()
 		
 		try:
-			status.value += "\nИмпортирую модуль ifctester..."
+			status.value += "\nИмпортирую модуль ifctester: "
 			page.update()
 			import ifctester
-			status.value += "\nМодуль ifctester импортирован."
+			status.value += "Модуль ifctester импортирован."
 		except Exception as e:
-			status.value += f"\nВозникла ошибка при импорте модуля ifctester: {e}."
-			page.update()
+			status.value += f"Возникла ошибка при импорте модуля ifctester: {e}."
+		page.update()
 	
 	await install_and_import_ifcopenshell()
 
