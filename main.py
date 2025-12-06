@@ -19,7 +19,7 @@ async def install_ifcopenshell():
 		print(f"Ошибка установки: {e}")
 
 
-def main(page: ft.Page):
+async def main(page: ft.Page):
 	page.title = "IFC-IDS Report"
 
 	header = ft.Text(
@@ -39,7 +39,7 @@ def main(page: ft.Page):
 		ifc_picker_btn,
 		results
 	)
-	asyncio.run(install_ifcopenshell())
+	await install_ifcopenshell()
 
 
 ft.app(target=main)
