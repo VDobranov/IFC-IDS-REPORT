@@ -27,7 +27,7 @@ async def main(page: ft.Page):
 		icon=ft.Icons.UPLOAD_FILE,
 	)
 
-	status = ft.Text("Статус: ")
+	status = ft.Text("Статус: ", selectable=True)
 	page.add(
 		header,
 		status,
@@ -36,7 +36,7 @@ async def main(page: ft.Page):
 	)
 	async def install_and_import_ifcopenshell():
 		try:
-			status.value = "Устанавливаю WASM-ifcopenshell: "
+			status.value = "Устанавливаю WASM-ifcopenshell:\n		"
 			page.update()
 			await micropip.install(WASM_WHEEL_URL)
 			status.value += "Установка завершена."
@@ -45,7 +45,7 @@ async def main(page: ft.Page):
 		page.update()
 
 		try:
-			status.value += "\nУстанавливаю ifctester: "
+			status.value += "\nУстанавливаю ifctester:\n		"
 			page.update()
 			await micropip.install('ifctester')
 			status.value += "Установка завершена."
@@ -54,7 +54,7 @@ async def main(page: ft.Page):
 		page.update()
 		
 		try:
-			status.value += "\nИмпортирую модуль ifcopenshell: "
+			status.value += "\nИмпортирую модуль ifcopenshell:\n		"
 			page.update()
 			import ifcopenshell
 			ifc_file = ifcopenshell.file()
@@ -64,7 +64,7 @@ async def main(page: ft.Page):
 		page.update()
 		
 		try:
-			status.value += "\nИмпортирую модуль ifctester: "
+			status.value += "\nИмпортирую модуль ifctester:\n		"
 			page.update()
 			import ifctester
 			status.value += "Модуль ifctester импортирован."
