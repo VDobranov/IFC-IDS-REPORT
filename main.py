@@ -50,7 +50,7 @@ async def main(page: ft.Page):
 			page.update()
 		except:
 			pass
-		await install_and_import_ifcopenshell()
+	await install_and_import_ifcopenshell()
 
 
 
