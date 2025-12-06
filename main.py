@@ -11,9 +11,6 @@ WASM_WHEEL_URL = "https://ifcopenshell.github.io/wasm-wheels/ifcopenshell-0.8.2+
 WASM_INSTALL_FLAG = "ifcopenshell_wasm_installed_v1"
 
 
-
-
-
 async def main(page: ft.Page):
 	page.title = "IFC-IDS Report"
 
@@ -38,13 +35,19 @@ async def main(page: ft.Page):
 	)
 	async def install_and_import_ifcopenshell():
 		try:
-			status.value = "Устанавливаю ifcopenshell..."
+			status.value = "Устанавливаю WASM-ifcopenshell..."
 			page.update()
 			await micropip.install(WASM_WHEEL_URL)
+			status.value += "\nУстановка завершена."
 		except Exception as e:
-			print(f"Ошибка установки: {e}")
+			status.value += "\nОшибка установки."	
+		page.update()
+		
 		try:
+			status.value += "\nИмпортирую модули ifcopenshell и ifctester..."
+			page.update()
 			import ifcopenshell
+			import ifctester
 			ifc_file = ifcopenshell.file()
 			status.value += "\nСоздан пустой IFC-файл."
 			page.update()
