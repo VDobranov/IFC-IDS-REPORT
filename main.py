@@ -36,12 +36,12 @@ async def main(page: ft.Page):
 	)
 	async def install_and_import_ifcopenshell():
 		try:
-			status.value = "Устанавливаю WASM-ifcopenshell:\n		"
+			status.value = "Устанавливаю ifcopenshell:\n		"
 			page.update()
 			await micropip.install(WASM_WHEEL_URL)
 			status.value += "Установка завершена."
 		except Exception as e:
-			status.value += f"Ошибка установки: {e}."	
+			status.value += f"Ошибка установки: {e}."
 		page.update()
 
 		try:
