@@ -47,7 +47,7 @@ async def main(page: ft.Page):
 		try:
 			status.value += "\nУстанавливаю ifctester:\n		"
 			page.update()
-			await micropip.install("git+https://github.com/eea/odfpy.git")
+			await micropip.install("https://github.com/VDobranov/IFC-IDS-REPORT/raw/refs/heads/main/odfpy-1.4.1.tar.gz")
 			await micropip.install('ifctester')
 			status.value += "Установка завершена."
 		except Exception as e:
