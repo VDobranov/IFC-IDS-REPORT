@@ -40,7 +40,7 @@ rm -rf "$DIST_DIR"
 if command -v flet >/dev/null 2>&1; then
   echo "Found flet CLI — running publish to produce ./dist/"
   set -x
-  flet publish src/main.py --route-url-strategy hash --base-url "$REPO_NAME" || true
+  flet publish src/main.py --distpath ../dist --route-url-strategy hash --base-url "$REPO_NAME" || true
   set +x
 fi
 

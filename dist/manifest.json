@@ -1,6 +1,6 @@
 {
-  "name": "IFC-IDS-REPORT",
-  "short_name": "IFC-IDS-REPORT",
+  "name": "src",
+  "short_name": "src",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#FFFFFF",
