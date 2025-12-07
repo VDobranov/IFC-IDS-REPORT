@@ -18,24 +18,24 @@
 
 1. Создайте и активируйте виртуальное окружение (macOS / zsh):
 
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
-```
+    ```bash
+    python3 -m venv .venv
+    source .venv/bin/activate
+    python -m pip install --upgrade pip
+    python -m pip install -r requirements.txt
+    ```
 
-2. Запуск локально в режиме веб (откроется браузер):
+1. Запуск локально в режиме веб (откроется браузер):
 
-```bash
-flet run --web src/main.py
-```
+    ```bash
+    flet run --web src/main.py
+    ```
 
-3. Запуск локально в настольном режиме (desktop):
+1. Запуск локально в настольном режиме (desktop):
 
-```bash
-flet src/main.py
-```
+    ```bash
+    flet src/main.py
+    ```
 
 ## Публикация для GitHub Pages
 
@@ -80,7 +80,3 @@ cp wheels/*.whl ../dist/wheels/
 - Расширенные форматы отчётов: подробные деревья по сущностям, фильтрация по типам ошибок, ссылки на элементы IFC.
 - Историзация результатов: хранение прошлых отчётов и их сравнение.
 - UI/UX: прогресс-бар загрузки для больших wheel-файлов, кнопка повтора установки, кнопка сброса кэша.
-
-## Контакты и вклад
-
-- Открыт к PR и предложениям.
