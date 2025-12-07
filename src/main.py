@@ -10,29 +10,71 @@ ODFPY_WHEEL = "https://raw.githubusercontent.com/vdobranov/ifc-ids-report/main/w
 
 
 async def main(page: ft.Page):
-	page.title = "IFC-IDS Report"
+	page.title = "IFC-IDS Отчёт"
 
 	header = ft.Text(
-		"IFC-IDS Report",
+		"IFC-IDS Отчёт",
 		style=ft.TextThemeStyle.HEADLINE_MEDIUM,
 	)
 
-	# status = ft.Text("Статус: ", selectable=True)
-
-	ifc_picker_btn = ft.ElevatedButton(
-		"Pick files",
-		icon=ft.Icons.UPLOAD_FILE,
-	)
-
+	# Статус и результаты
+	status = ft.Text("Статус: готов", selectable=True)
 	results = ft.ListView(expand=True, spacing=8)
 
-	page.add(
-		header,
-		# status,
-		ifc_picker_btn,
-		results
+	# File pickers
+	def _ifc_result(e: ft.FilePickerResultEvent):
+		if e.files:
+			ifc_label.value = e.files[0].name
+		else:
+			ifc_label.value = "Отмена"
+		ifc_label.update()
+
+	def _ids_result(e: ft.FilePickerResultEvent):
+		if e.files:
+			ids_label.value = e.files[0].name
+		else:
+			ids_label.value = "Отмена"
+		ids_label.update()
+
+	ifc_picker = ft.FilePicker(on_result=_ifc_result)
+	ids_picker = ft.FilePicker(on_result=_ids_result)
+	page.overlay.append(ifc_picker)
+	page.overlay.append(ids_picker)
+
+	ifc_picker_btn = ft.ElevatedButton("Выбрать IFC файл", icon=ft.Icons.UPLOAD_FILE, on_click=lambda _: ifc_picker.pick_files())
+	ids_picker_btn = ft.ElevatedButton("Выбрать IDS файл", icon=ft.Icons.UPLOAD_FILE, on_click=lambda _: ids_picker.pick_files())
+
+	ifc_label = ft.Text("IFC: не выбран")
+	ids_label = ft.Text("IDS: не выбран")
+
+	# Dropdown с типом отчёта
+	report_dropdown = ft.Dropdown(
+		width=300,
+		value="IDS: Сводка",
+		options=[
+			ft.dropdown.Option("IDS: Сводка"),
+			ft.dropdown.Option("Сырые данные (preview)"),
+			ft.dropdown.Option("IFC: Сводка сущностей"),
+			ft.dropdown.Option("IFC: Свойства (Psets)"),
+		],
 	)
-	
+
+	run_btn = ft.ElevatedButton("Запустить отчёт", on_click=lambda e: results.controls.append(ft.Text(f"Запуск: {report_dropdown.value}")))
+
+	# Сборка интерфейса
+	controls_col = ft.Column([
+		header,
+		ft.Row([ifc_picker_btn, ifc_label], spacing=20),
+		ft.Row([ids_picker_btn, ids_label], spacing=20),
+		ft.Row([report_dropdown, run_btn], alignment=ft.MainAxisAlignment.START),
+		ft.Divider(),
+		ft.Text("Лог установки:", weight=ft.FontWeight.BOLD),
+		status,
+	], spacing=12)
+
+	page.add(controls_col, results)
+
+	# Запустить фоновую установку модулей (блок UI внутри функции)
 	asyncio.create_task(initialize.block_ui_and_install(page, IFCOPENSHELL_WHEEL, ODFPY_WHEEL))
 
 
