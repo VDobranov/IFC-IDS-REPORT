@@ -1,4 +1,5 @@
 import flet as ft
+import asyncio
 
 import initialize
 
@@ -16,7 +17,7 @@ async def main(page: ft.Page):
 		style=ft.TextThemeStyle.HEADLINE_MEDIUM,
 	)
 
-	status = ft.Text("Статус: ", selectable=True)
+	# status = ft.Text("Статус: ", selectable=True)
 
 	ifc_picker_btn = ft.ElevatedButton(
 		"Pick files",
@@ -27,12 +28,12 @@ async def main(page: ft.Page):
 
 	page.add(
 		header,
-		status,
+		# status,
 		ifc_picker_btn,
 		results
 	)
 	
-	await initialize.install_and_import_ifcopenshell()
+	asyncio.create_task(initialize.block_ui_and_install(page, IFCOPENSHELL_WHEEL, ODFPY_WHEEL))
 
 
 
