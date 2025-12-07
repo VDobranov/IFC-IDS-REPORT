@@ -5,8 +5,8 @@ import js
 
 async def install_and_import_ifcopenshell(page: ft.Page, status: ft.Text, IFCOPENSHELL_WHEEL: str, ODFPY_WHEEL: str):
 	try:
-		js.console.log("Устанавливаю ifcopenshell")
-		status.value += "Устанавливаю ifcopenshell\n"
+		js.console.log("Устанавливаю ifcopenshell…")
+		status.value += "Устанавливаю ifcopenshell…\n"
 		page.update()
 		await micropip.install(IFCOPENSHELL_WHEEL)
 		js.console.log("Установка завершена.")
@@ -16,8 +16,8 @@ async def install_and_import_ifcopenshell(page: ft.Page, status: ft.Text, IFCOPE
 		status.value += f"Ошибка установки: {e}.\n"
 	page.update()
 	try:
-		js.console.log("Устанавливаю ifctester")
-		status.value += "Устанавливаю ifctester\n"
+		js.console.log("Устанавливаю ifctester…")
+		status.value += "Устанавливаю ifctester…\n"
 		page.update()
 		await micropip.install(ODFPY_WHEEL)
 		await micropip.install('ifctester')
@@ -28,21 +28,19 @@ async def install_and_import_ifcopenshell(page: ft.Page, status: ft.Text, IFCOPE
 		status.value += f"Ошибка установки: {e}.\n"
 	page.update()
 	try:
-		js.console.log("Импортирую модуль ifcopenshell")
-		status.value += "Импортирую модуль ifcopenshell\n"
+		js.console.log("Импортирую модуль ifcopenshell…")
+		status.value += "Импортирую модуль ifcopenshell…\n"
 		page.update()
 		import ifcopenshell
-		# ifc_file = ifcopenshell.file()
 		js.console.log("Модуль ifcopenshell импортирован.")
 		status.value += "Модуль ifcopenshell импортирован.\n"
 	except Exception as e:
-		js.console.log(
-			f"Возникла ошибка при импорте модуля ifcopenshell: {e}.")
+		js.console.log(f"Возникла ошибка при импорте модуля ifcopenshell: {e}.")
 		status.value += f"Возникла ошибка при импорте модуля ifcopenshell: {e}."
 	page.update()
 	try:
-		js.console.log("Импортирую модуль ifctester")
-		status.value += "Импортирую модуль ifctester\n"
+		js.console.log("Импортирую модуль ifctester…")
+		status.value += "Импортирую модуль ifctester…\n"
 		page.update()
 		import ifctester
 		js.console.log("Модуль ifctester импортирован.")
@@ -58,7 +56,7 @@ async def block_ui_and_install(page: ft.Page, IFCOPENSHELL_WHEEL: str, ODFPY_WHE
 		c.disabled = True
 	page.update()
 
-	status = ft.Text("Пожалуйста, подождите окончания установки…\n")
+	status = ft.Text("Пожалуйста, дождитесь окончания установки…\n\n")
 	busy_overlay = ft.AlertDialog(
 		title=ft.Text("Установка библиотек Python"),
 		content=ft.Container(
@@ -66,7 +64,7 @@ async def block_ui_and_install(page: ft.Page, IFCOPENSHELL_WHEEL: str, ODFPY_WHE
 				[ft.ProgressRing(), status],
 				alignment=ft.MainAxisAlignment.START,
 				horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-			height=page.height/3),
+			height=page.height/2),
 		actions=[],
 		modal=True
 	)
