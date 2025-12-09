@@ -65,23 +65,7 @@ def ui_init(page: ft.Page):
 		results
 	], spacing=12)
 
-	txt_style = ft.TextStyle(
-		color=LIGHT,
-		font_family="PT Sans",
-		size=16
-	)
-	header_style = copy(txt_style)
-	header_style.size = 40
-	lbl_style = copy(txt_style)
-	lbl_style.size = 14
-	buttons_style = ft.ButtonStyle(
-		color=DARK,
-		overlay_color=ACCENT,
-		bgcolor=LIGHT,
-		# overlay_color=LIGHT,
-		shape=ft.RoundedRectangleBorder(radius=0),
-		text_style=txt_style
-	)
+	
 
 	class ButtonRow(ft.Row):
 		def __init__(
@@ -232,3 +216,21 @@ def ui_init(page: ft.Page):
 	)
 
 	return cntrls
+
+txt_style = ft.TextStyle(
+	color=LIGHT,
+	font_family="PT Sans",
+	size=16
+)
+header_style = copy(txt_style)
+header_style.size = 40
+lbl_style = copy(txt_style)
+lbl_style.size = 14
+buttons_style = ft.ButtonStyle(
+	color=DARK,
+	overlay_color=ACCENT,
+	bgcolor=LIGHT,
+	# overlay_color=LIGHT,
+	shape=ft.RoundedRectangleBorder(radius=0),
+	text_style=txt_style
+)

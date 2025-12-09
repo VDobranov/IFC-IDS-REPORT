@@ -2,6 +2,8 @@ import flet as ft
 import micropip
 import js
 
+from ui import header_style, txt_style
+
 
 async def install_and_import_ifcopenshell(page: ft.Page, status: ft.Text, IFCOPENSHELL_WHEEL: str, ODFPY_WHEEL: str):
 	try:
@@ -56,9 +58,9 @@ async def block_ui_and_install(page: ft.Page, IFCOPENSHELL_WHEEL: str, ODFPY_WHE
 		c.disabled = True
 	page.update()
 
-	status = ft.Text("Пожалуйста, дождитесь окончания установки…\n\n")
+	status = ft.Text("Пожалуйста, дождитесь окончания установки…\n\n", style=txt_style)
 	busy_overlay = ft.AlertDialog(
-		title=ft.Text("Установка библиотек Python"),
+		title=ft.Text("Установка библиотек Python", style=header_style, text_align=ft.TextAlign.CENTER),
 		content=ft.Container(
 			content=ft.Column(
 				[ft.ProgressRing(), status],
@@ -66,7 +68,8 @@ async def block_ui_and_install(page: ft.Page, IFCOPENSHELL_WHEEL: str, ODFPY_WHE
 				horizontal_alignment=ft.CrossAxisAlignment.CENTER),
 			height=page.height/2),
 		actions=[],
-		modal=True
+		modal=True,
+		shape=ft.RoundedRectangleBorder(radius=0)
 	)
 	page.open(busy_overlay)
 

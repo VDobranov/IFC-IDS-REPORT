@@ -16,14 +16,14 @@ async def main(page: ft.Page):
 	page.fonts = {
 		"PT Sans": "https://raw.githubusercontent.com/google/fonts/master/ofl/ptsans/PT_Sans-Web-Regular.ttf",
 	}
-	
+
 	cntrls = ui.ui_init(page)
 	page.add(cntrls)
 	page.padding = 0
 	page.update()
 
 	# Запустить фоновую установку модулей (блок UI внутри функции)
-	# asyncio.create_task(initialize.block_ui_and_install(page, IFCOPENSHELL_WHEEL, ODFPY_WHEEL))
+	asyncio.create_task(initialize.block_ui_and_install(page, IFCOPENSHELL_WHEEL, ODFPY_WHEEL))
 
 
 ft.app(target=main)
