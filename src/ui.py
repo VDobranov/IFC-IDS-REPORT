@@ -1,9 +1,11 @@
 from copy import copy
 from typing import Sequence
 import flet as ft
+# import js
 
 DARK = "#3A3A3A"
 LIGHT = "#D9D9D9"
+ACCENT = "#D4AF82"
 
 
 def ui_init(page: ft.Page):
@@ -15,30 +17,25 @@ def ui_init(page: ft.Page):
 
 	def _ifc_result(e: ft.FilePickerResultEvent):
 		if e.files:
-			ifc_label.value = e.files[0].name
+			ifcButtonRow.filename.value = e.files[0].name
 		else:
-			ifc_label.value = "Отмена"
-		ifc_label.update()
+			ifcButtonRow.filename.value = "<…>"
+		ifcButtonRow.update()
 
 	def _ids_result(e: ft.FilePickerResultEvent):
 		if e.files:
-			ids_label.value = e.files[0].name
+			idsButtonRow.filename.value = e.files[0].name
 		else:
-			ids_label.value = "Отмена"
-		ids_label.update()
+			idsButtonRow.filename.value = "<…>"
+		idsButtonRow.update()
 
 	ifc_picker = ft.FilePicker(on_result=_ifc_result)
 	ifc_picker.allowed_extensions = ["ifc"]
 	ids_picker = ft.FilePicker(on_result=_ids_result)
 	ids_picker.allowed_extensions = ["ids", "xml"]
-	# page.overlay.append(ifc_picker)
-	# page.overlay.append(ids_picker)
-	ifc_picker_btn = ft.ElevatedButton(
-		"Выбрать IFC файл", icon=ft.Icons.FILE_UPLOAD, on_click=lambda _: ifc_picker.pick_files())
-	ids_picker_btn = ft.ElevatedButton(
-		"Выбрать IDS файл", icon=ft.Icons.FILE_UPLOAD, on_click=lambda _: ids_picker.pick_files())
-	ifc_label = ft.Text("IFC: не выбран")
-	ids_label = ft.Text("IDS: не выбран")
+	page.overlay.append(ifc_picker)
+	page.overlay.append(ids_picker)
+	
 	# Dropdown с типом отчёта
 	report_dropdown = ft.Dropdown(
 		width=300,
@@ -58,12 +55,10 @@ def ui_init(page: ft.Page):
 		results.controls.append(ft.Text(f"Запуск: {report_dropdown.value}"))
 		# page.update()
 
-	run_btn = ft.ElevatedButton("Запустить отчёт", on_click=_results_append)
+	run_btn = ft.Button("Запустить отчёт", on_click=_results_append)
 	# Сборка интерфейса
 	controls_col = ft.Column([
 		header,
-		ft.Row([ifc_picker_btn, ifc_label], spacing=20),
-		ft.Row([ids_picker_btn, ids_label], spacing=20),
 		ft.Row([report_dropdown, run_btn],
 			   alignment=ft.MainAxisAlignment.START),
 		ft.Divider(),
@@ -77,8 +72,11 @@ def ui_init(page: ft.Page):
 	)
 	header_style = copy(txt_style)
 	header_style.size = 40
+	lbl_style = copy(txt_style)
+	lbl_style.size = 14
 	buttons_style = ft.ButtonStyle(
 		color=DARK,
+		overlay_color=ACCENT,
 		bgcolor=LIGHT,
 		# overlay_color=LIGHT,
 		shape=ft.RoundedRectangleBorder(radius=0),
@@ -93,24 +91,22 @@ def ui_init(page: ft.Page):
 				label: str = "label",
 				placeholder: str = "placeholder",
 				icon: ft.Icons | None = None,
-				on_click: ft.OptionalControlEventCallable | None = None
+				on_clck: ft.OptionalControlEventCallable | None = None
 		):
 			super().__init__(controls, alignment)
 			self.alignment = ft.MainAxisAlignment.SPACE_BETWEEN
+			self.filename = ft.Text(placeholder, style=txt_style)
 			self.controls = [
-				ft.ElevatedButton(
+				ft.Button(
 					label,
 					icon=icon,
 					style=buttons_style,
 					height=56,
-					on_click=on_click,
+					on_click=on_clck,
 					expand=1000
 				),
 				ft.Container(
-					ft.Text(
-						placeholder,
-						style=txt_style,
-					),
+					self.filename,
 					alignment=ft.alignment.center_left,
 					border=ft.border.all(1, LIGHT),
 					border_radius=0,
@@ -119,6 +115,17 @@ def ui_init(page: ft.Page):
 					expand=1618
 				)
 			]
+	
+	ifcButtonRow = ButtonRow(label="Загрузить IFC-файл",
+							placeholder="<Модель.ifc>",
+							icon=ft.Icons.FILE_UPLOAD,
+							on_clck=lambda _: ifc_picker.pick_files()
+							)
+	idsButtonRow = ButtonRow(label="Загрузить IDS-файл",
+							placeholder="<Спецификация.ids>",
+							icon=ft.Icons.FILE_UPLOAD,
+							on_clck=lambda _: ids_picker.pick_files()
+							)
 
 	report_formats = [
 		"TXT",
@@ -161,11 +168,9 @@ def ui_init(page: ft.Page):
 									# height=100,
 									alignment=ft.alignment.center,
 								),
-								ButtonRow(label="Загрузить IFC-файл",
-										placeholder="Модель.ifc", icon=ft.Icons.FILE_UPLOAD),
-								ButtonRow(label="Загрузить IDS-файл",
-										placeholder="Спецификация.ids", icon=ft.Icons.FILE_UPLOAD),
-								ft.Row([ft.ElevatedButton(
+								ifcButtonRow,
+								idsButtonRow,
+								ft.Row([ft.Button(
 									"Запустить валидацию",
 									icon=ft.Icons.CHECK,
 									style=buttons_style,
@@ -174,7 +179,7 @@ def ui_init(page: ft.Page):
 									expand=1000
 								)]),
 								ft.Row([
-									ft.ElevatedButton(
+									ft.Button(
 										"Скачать отчёт",
 										icon=ft.Icons.FILE_DOWNLOAD,
 										style=buttons_style,
@@ -186,6 +191,8 @@ def ui_init(page: ft.Page):
 									ft.Dropdown(
 										label="формат отчёта",
 										value="HTML",
+										label_style=lbl_style,
+										text_style=txt_style,
 										color=LIGHT,
 										trailing_icon=ft.Icon(
 											name=ft.Icons.ARROW_DROP_DOWN, color=LIGHT),
