@@ -52,6 +52,8 @@ def generate_report(ifc_bytes_view, ids_bytes_view, report_format):
     from ifctester import ids as ids_mod
     from ifctester import reporter as reporter_mod
     
+    print(f"=== ГЕНЕРАЦИЯ ОТЧЁТА: {report_format} ===")
+    
     ifc_bytes = bytes(ifc_bytes_view)
     ifc_str = ifc_bytes.decode("utf-8", errors="ignore")
     model = ifcopenshell.file.from_string(ifc_str)
@@ -61,7 +63,7 @@ def generate_report(ifc_bytes_view, ids_bytes_view, report_format):
     my_ids.validate(model)
     
     fmt = report_format.strip()
-    print(f"Генерирую {fmt}...")
+    print(f"Создаю reporter.{fmt}(my_ids)...")
     
     if fmt == "Json":
         rep = reporter_mod.Json(my_ids)
@@ -72,20 +74,40 @@ def generate_report(ifc_bytes_view, ids_bytes_view, report_format):
     else:
         rep = reporter_mod.Html(my_ids)
     
+    print("Выполняю rep.report()...")
     rep.report()
+    
+    print(f"Методы: to_file={hasattr(rep, 'to_file')}, to_string={hasattr(rep, 'to_string')}")
     
     if fmt == "Json":
         if hasattr(rep, "to_json"):
-            return rep.to_json().encode('utf-8')
-        return rep.to_string().encode('utf-8') if hasattr(rep, "to_string") else str(rep).encode('utf-8')
+            result = rep.to_json().encode('utf-8')
+        elif hasattr(rep, "to_string"):
+            result = rep.to_string().encode('utf-8')
+        else:
+            result = str(rep).encode('utf-8')
     elif fmt == "Html":
-        return rep.to_string().encode('utf-8') if hasattr(rep, "to_string") else str(rep).encode('utf-8')
-    else:  # Ods, Bcf
-        if hasattr(rep, "to_bytes"):
-            return rep.to_bytes()
-        if hasattr(rep, "to_fileobj"):
+        result = rep.to_string().encode('utf-8') if hasattr(rep, "to_string") else str(rep).encode('utf-8')
+    else:  # Ods, Bcf - бинарные форматы
+        # Ods использует to_file(filename), делаем временный файл в памяти
+        if hasattr(rep, "to_file"):
             import io
-            buf = io.BytesIO()
-            rep.to_fileobj(buf)
-            return buf.getvalue()
-        return b""
+            # Создаём временный файл в Pyodide FS
+            import os
+            tmp_path = "/tmp/ods_report.ods"
+            rep.to_file(tmp_path)
+            # Читаем обратно
+            with open(tmp_path, "rb") as f:
+                result = f.read()
+            os.remove(tmp_path)
+            print(f"✓ to_file(): {len(result)} байт")
+        elif hasattr(rep, "to_string"):
+            # Fallback для Ods - текстовое представление
+            result = rep.to_string().encode('utf-8')
+            print(f"✓ to_string() fallback: {len(result)} байт")
+        else:
+            result = str(rep).encode('utf-8')
+            print(f"❌ Fallback str(): {len(result)} байт")
+    
+    print(f"ИТОГО: {len(result)} байт")
+    return result
