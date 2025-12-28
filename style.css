@@ -169,7 +169,7 @@ pre#output {
   font-size: 11px;
   color: #d9d9d9;
   opacity: 0.8;
-  border-top: 1px solid #d9d9d9;
+  /* border-top: 1px solid #d9d9d9; */
   padding-top: 8px;
   margin-top: 8px;
 }
@@ -279,4 +279,8 @@ pre#output {
   #report-frame {
     height: calc(100vh - 240px);
   }
+}
+
+.contacts a {
+  color: #d9d9d9;
 }
