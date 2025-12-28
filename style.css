@@ -2,161 +2,195 @@
   box-sizing: border-box;
 }
 
+/* Базовые цвета:
+   - тёмная левая панель и общий фон: #3A3A3A
+   - светлые элементы и правая часть: #D9D9D9 */
 body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   margin: 0;
-  padding: 2rem;
-  background: #f8fafc;
-  min-height: 100vh;
-  color: #1e293b;
+  padding: 0;
+  font-family: "PT Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  background: #3a3a3a;
+  color: #d9d9d9;
+  height: 100vh;
+  overflow: hidden;
 }
 
+/* Основной двухколоночный лейаут (золотое сечение) */
 .main-layout {
   display: flex;
-  gap: 2rem;
-  /* Убрано max-width - полная ширина экрана */
-  margin: 0 auto;
-  height: calc(100vh - 4rem);
-  width: 100%;
+  height: 100vh;
+  width: 100vw;
 }
 
+/* Левая панель ~38% — тёмная */
 .controls-panel {
-  flex: 1; /* ~38% по золотому сечению */
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  flex: 1;
+  max-width: 40vw;
+  background: #3a3a3a;
+  padding: 32px 24px;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  overflow-y: auto;
+  gap: 24px;
+  border-right: 1px solid #d9d9d9;
 }
 
-h1 {
-  margin: 0 0 0.5rem 0;
-  font-size: 2rem;
-  font-weight: 700;
-  color: #1e293b;
+/* Заголовок IFC-IDS-REPORT */
+.controls-panel h1 {
+  margin: 0;
   text-align: center;
+  font-size: 28px;
+  letter-spacing: 2px;
+  font-weight: 700;
+  color: #d9d9d9;
 }
 
+/* Блоки панели */
 .panel-section {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 12px;
 }
 
 .panel-section h3 {
-  margin: 0 0 0.5rem 0;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #475569;
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #d9d9d9;
 }
 
+/* Ряды по умолчанию */
 .row {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 6px;
+}
+
+/* Специальный ряд: формат + кнопка в одну строку */
+.row.row-inline {
+  flex-direction: row;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.row.row-inline select {
+  flex: 2;
+}
+
+.row.row-inline button {
+  flex: 1;
 }
 
 label {
-  font-weight: 600;
-  color: #374151;
-  font-size: 0.95rem;
+  font-size: 13px;
+  color: #d9d9d9;
 }
 
-input[type="file"] {
-  padding: 0.75rem;
-  border: 2px solid #e2e8f0;
-  border-radius: 10px;
-  background: #f8fafc;
-  font-size: 0.95rem;
-  transition: all 0.2s ease;
-}
-
-input[type="file"]:hover,
-input[type="file"]:focus {
-  border-color: #3b82f6;
-  background: #eff6ff;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-select {
-  padding: 0.75rem;
-  border: 2px solid #e2e8f0;
-  border-radius: 10px;
-  background: white;
-  font-size: 0.95rem;
-  transition: all 0.2s ease;
-}
-
-select:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
+/* Кнопки — светлые */
 button {
-  padding: 0.875rem 1.5rem;
-  background: #3b82f6;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  font-size: 1rem;
-  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+  border-radius: 0;
+  border: 1px solid #d9d9d9;
+  background: #d9d9d9;
+  color: #3a3a3a;
+  font-size: 13px;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
+  text-align: center;
+  width: 100%;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 
 button:hover:not(:disabled) {
-  background: #2563eb;
-  transform: translateY(-1px);
+  background: #3a3a3a;
+  color: #d9d9d9;
 }
 
 button:disabled {
   opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
+  cursor: default;
 }
 
-pre {
-  background: #f1f5f9;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  padding: 1rem;
-  max-height: 200px;
+/* Селект формата — светлый, с явной стрелкой */
+select {
+  width: 100%;
+  padding: 10px 36px 10px 10px;
+  border-radius: 0;
+  border: 1px solid #d9d9d9;
+  background:
+    #d9d9d9
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%233A3A3A' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E")
+    no-repeat right 10px center;
+  color: #3a3a3a;
+  font-size: 13px;
+  appearance: none;
+}
+
+/* Файловые инпуты */
+input[type="file"] {
+  width: 100%;
+  padding: 9px 10px;
+  border-radius: 0;
+  border: 1px solid #d9d9d9;
+  background: #3a3a3a;
+  color: #d9d9d9;
+  font-size: 13px;
+}
+
+/* Лог */
+pre#output {
+  margin: 0;
+  margin-top: 4px;
+  padding: 8px;
+  background: #3a3a3a;
+  border: 1px solid #d9d9d9;
+  color: #d9d9d9;
+  font-size: 11px;
+  line-height: 1.4;
+  max-height: 140px;
   overflow: auto;
-  white-space: pre-wrap;
-  font-family: 'Monaco', 'Menlo', monospace;
-  font-size: 0.85rem;
-  line-height: 1.5;
 }
 
+/* Правая область ~62% — светлая */
 .report-area {
-  flex: 1.618; /* ~62% по золотому сечению */
-  background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+  flex: 1.618;
+  background: #d9d9d9;
+  padding: 24px;
 }
 
+/* Iframe отчёта — светлый блок с тёмной рамкой */
 #report-frame {
-  flex: 1;
-  border: none;
-  border-radius: 16px;
-  background: #ffffff;
+  width: 100%;
+  height: 100%;
+  border: 1px solid #3a3a3a;
+  background: #d9d9d9;
 }
 
-@media (max-width: 1200px) {
+/* Адаптив */
+@media (max-width: 900px) {
   .main-layout {
     flex-direction: column;
-    height: auto;
   }
-  
+
+  .controls-panel {
+    flex: none;
+    width: 100%;
+    max-width: none;
+    border-right: none;
+    border-bottom: 1px solid #d9d9d9;
+  }
+
   .report-area {
     flex: none;
-    height: 600px;
+    height: calc(100vh - 260px);
+  }
+
+  /* На узких экранах формат + кнопка — столбцом */
+  .row.row-inline {
+    flex-direction: column;
   }
 }

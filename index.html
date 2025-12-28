@@ -1,61 +1,60 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>IFC/IDS Pyodide анализатор</title>
+  <meta charset="UTF-8" />
+  <title>IFC-IDS-REPORT</title>
+  <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/pyodide/v0.26.0/full/pyodide.js"></script>
-  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="main-layout">
     <div class="controls-panel">
-      <h1>IFC/IDS анализатор</h1>
-      
+      <h1>IFC-IDS-REPORT</h1>
+
       <div class="panel-section">
         <h3>Файлы для проверки</h3>
         <div class="row">
           <label for="ifc-upload">IFC файл:</label>
-          <input type="file" id="ifc-upload" accept=".ifc">
+          <input type="file" id="ifc-upload" accept=".ifc" />
         </div>
         <div class="row">
           <label for="ids-upload">IDS файл:</label>
-          <input type="file" id="ids-upload" accept=".ids,.xml">
+          <input type="file" id="ids-upload" accept=".ids,.xml" />
         </div>
-      </div>
-      
-      <div class="panel-section">
         <div class="row">
-          <button id="run-btn" disabled>Запустить проверку</button>
+          <button id="run-btn" disabled>Запустить валидацию</button>
         </div>
       </div>
-      
-      <div class="panel-section">
-        <h3>Результат</h3>
-        <pre id="output"></pre>
-      </div>
-      
+
+      <!-- Блок формата и скачивания отчёта ВЫШЕ блока результата -->
       <div class="panel-section">
         <h3>Формат отчёта</h3>
         <div class="row">
           <label for="format-select">Формат:</label>
+        </div>
+        <div class="row row-inline">
           <select id="format-select">
             <option value="Html">HTML</option>
             <option value="Json">JSON</option>
             <option value="Ods">ODS</option>
             <option value="Bcf">BCF</option>
           </select>
-        </div>
-        <div class="row">
           <button id="download-btn" disabled>Скачать отчёт</button>
         </div>
       </div>
+
+      <!-- Ниже блок результата -->
+      <div class="panel-section">
+        <h3>Результат</h3>
+        <pre id="output"></pre>
+      </div>
     </div>
-    
+
     <div class="report-area">
       <iframe id="report-frame"></iframe>
     </div>
   </div>
-  
+
   <script src="main.js"></script>
 </body>
 </html>
