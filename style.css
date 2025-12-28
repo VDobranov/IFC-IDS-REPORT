@@ -16,7 +16,7 @@ body {
   overflow: hidden;
 }
 
-/* Основной двухколоночный лейаут (золотое сечение) */
+/* Основной лейаут (десктоп — две колонки) */
 .main-layout {
   display: flex;
   height: 100vh;
@@ -52,6 +52,12 @@ body {
   gap: 12px;
 }
 
+/* Последний блок (Результат) растягиваем на всю оставшуюся высоту */
+.controls-panel .panel-section:last-of-type {
+  flex: 1;
+  min-height: 0; /* нужно для корректного flex‑скролла */
+}
+
 .panel-section h3 {
   margin: 0;
   font-size: 12px;
@@ -67,7 +73,7 @@ body {
   gap: 6px;
 }
 
-/* Специальный ряд: формат + кнопка в одну строку */
+/* Формат + кнопка в одну строку (десктоп/планшет) */
 .row.row-inline {
   flex-direction: row;
   align-items: stretch;
@@ -141,56 +147,125 @@ input[type="file"] {
   font-size: 13px;
 }
 
-/* Лог */
+/* Лог — без рамки, на всю высоту секции */
 pre#output {
   margin: 0;
   margin-top: 4px;
   padding: 8px;
   background: #3a3a3a;
-  border: 1px solid #d9d9d9;
+  border: none;              /* рамка убрана */
   color: #d9d9d9;
   font-size: 11px;
   line-height: 1.4;
-  max-height: 140px;
+  flex: 1;                   /* занимать всю оставшуюся высоту секции */
+  min-height: 0;
+  max-height: none;
   overflow: auto;
 }
 
-/* Правая область ~62% — светлая */
+/* Правая область — светлая */
 .report-area {
   flex: 1.618;
   background: #d9d9d9;
   padding: 24px;
 }
 
-/* Iframe отчёта — светлый блок с тёмной рамкой */
+/* Iframe отчёта без рамки */
 #report-frame {
   width: 100%;
   height: 100%;
-  border: 1px solid #3a3a3a;
+  border: none;
   background: #d9d9d9;
 }
 
-/* Адаптив */
-@media (max-width: 900px) {
+/* ===== Адаптивные лэйауты ===== */
+
+/* Планшеты */
+@media (max-width: 1024px) {
+  .controls-panel {
+    max-width: 45vw;
+    padding: 24px 16px;
+  }
+
+  .report-area {
+    padding: 16px;
+  }
+}
+
+/* Мобильные устройства */
+@media (max-width: 768px) {
+  body {
+    height: auto;
+    overflow: auto;
+  }
+
   .main-layout {
     flex-direction: column;
+    height: auto;
+    min-height: 100vh;
   }
 
   .controls-panel {
     flex: none;
+    max-width: 100%;
     width: 100%;
-    max-width: none;
     border-right: none;
     border-bottom: 1px solid #d9d9d9;
+    padding: 20px 16px;
+    gap: 16px;
+  }
+
+  .controls-panel h1 {
+    font-size: 22px;
+    letter-spacing: 1px;
+  }
+
+  .panel-section {
+    gap: 8px;
+  }
+
+  .row {
+    gap: 4px;
+  }
+
+  .row.row-inline {
+    flex-direction: column;
   }
 
   .report-area {
     flex: none;
-    height: calc(100vh - 260px);
+    width: 100%;
+    padding: 12px 0 0 0;
+    background: #3a3a3a;
   }
 
-  /* На узких экранах формат + кнопка — столбцом */
-  .row.row-inline {
-    flex-direction: column;
+  #report-frame {
+    width: 100%;
+    height: calc(100vh - 260px);
+    max-height: 600px;
+    border: none;
+    background: #d9d9d9;
+  }
+}
+
+/* Очень маленькие экраны */
+@media (max-width: 480px) {
+  .controls-panel {
+    padding: 16px 12px;
+  }
+
+  button {
+    font-size: 12px;
+    padding: 9px 12px;
+  }
+
+  select,
+  input[type="file"] {
+    font-size: 12px;
+    padding: 8px 32px 8px 8px;
+  }
+
+  #report-frame {
+    height: calc(100vh - 240px);
   }
 }

@@ -161,7 +161,7 @@ downloadBtn.addEventListener("click", async () => {
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            log(`✅ Отчёт ${format} успешно скачан!`);
+            log(`Скачивание отчёта ${format}…`);
         } else {
             log("❌ Отчёт пустой - ошибка генерации.");
         }
