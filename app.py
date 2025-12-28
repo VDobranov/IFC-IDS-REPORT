@@ -18,8 +18,9 @@ async def init_packages():
     print("ifcopenshell:", ifcopenshell.__version__)
     return ifcopenshell, ifctester_ids, ifctester_reporter
 
+
 def validate_and_show_html(ifc_bytes_view, ids_bytes_view):
-    """Генерирует HTML для просмотра + статистика"""
+    """Генерирует HTML для просмотра + статистика (HTML как СТРОКА)."""
     import ifcopenshell
     from ifctester import ids as ids_mod
     from ifctester import reporter as reporter_mod
@@ -32,12 +33,10 @@ def validate_and_show_html(ifc_bytes_view, ids_bytes_view):
     my_ids = ids_mod.from_string(ids_xml)
     my_ids.validate(model)
     
-    # HTML для iframe
     rep = reporter_mod.Html(my_ids)
     rep.report()
     html_report = rep.to_string() if hasattr(rep, "to_string") else str(rep)
     
-    # Статистика
     total = len(my_ids.specifications)
     passed = sum(1 for s in my_ids.specifications if getattr(s, "status", None) is True)
     failed = sum(1 for s in my_ids.specifications if getattr(s, "status", None) is False)
@@ -46,13 +45,17 @@ def validate_and_show_html(ifc_bytes_view, ids_bytes_view):
     print(f"HTML готов: {len(html_report)} символов")
     return result, html_report
 
+
 def generate_report(ifc_bytes_view, ids_bytes_view, report_format):
-    """Генерирует отчёт в любом формате"""
+    """Генерирует отчёт в нужном формате. HTML — строка, JSON — UTF‑8 с кириллицей, ODS/BCF — бинарно."""
     import ifcopenshell
     from ifctester import ids as ids_mod
     from ifctester import reporter as reporter_mod
+    import json
+    import os
     
-    print(f"=== ГЕНЕРАЦИЯ ОТЧЁТА: {report_format} ===")
+    fmt = (report_format or "").strip()
+    print(f"=== ГЕНЕРАЦИЯ ОТЧЁТА: {fmt} ===")
     
     ifc_bytes = bytes(ifc_bytes_view)
     ifc_str = ifc_bytes.decode("utf-8", errors="ignore")
@@ -62,9 +65,6 @@ def generate_report(ifc_bytes_view, ids_bytes_view, report_format):
     my_ids = ids_mod.from_string(ids_xml)
     my_ids.validate(model)
     
-    fmt = report_format.strip()
-    print(f"Создаю reporter.{fmt}(my_ids)...")
-    
     if fmt == "Json":
         rep = reporter_mod.Json(my_ids)
     elif fmt == "Ods":
@@ -72,42 +72,39 @@ def generate_report(ifc_bytes_view, ids_bytes_view, report_format):
     elif fmt == "Bcf":
         rep = reporter_mod.Bcf(my_ids)
     else:
+        fmt = "Html"
         rep = reporter_mod.Html(my_ids)
     
-    print("Выполняю rep.report()...")
     rep.report()
     
-    print(f"Методы: to_file={hasattr(rep, 'to_file')}, to_string={hasattr(rep, 'to_string')}")
-    
     if fmt == "Json":
+        # аккуратно пересобираем JSON, чтобы кириллица была нормальной
         if hasattr(rep, "to_json"):
-            result = rep.to_json().encode('utf-8')
+            raw = rep.to_json()
         elif hasattr(rep, "to_string"):
-            result = rep.to_string().encode('utf-8')
+            raw = rep.to_string()
         else:
-            result = str(rep).encode('utf-8')
-    elif fmt == "Html":
-        result = rep.to_string().encode('utf-8') if hasattr(rep, "to_string") else str(rep).encode('utf-8')
-    else:  # Ods, Bcf - бинарные форматы
-        # Ods использует to_file(filename), делаем временный файл в памяти
-        if hasattr(rep, "to_file"):
-            import io
-            # Создаём временный файл в Pyodide FS
-            import os
-            tmp_path = "/tmp/ods_report.ods"
-            rep.to_file(tmp_path)
-            # Читаем обратно
-            with open(tmp_path, "rb") as f:
-                result = f.read()
-            os.remove(tmp_path)
-            print(f"✓ to_file(): {len(result)} байт")
-        elif hasattr(rep, "to_string"):
-            # Fallback для Ods - текстовое представление
-            result = rep.to_string().encode('utf-8')
-            print(f"✓ to_string() fallback: {len(result)} байт")
-        else:
-            result = str(rep).encode('utf-8')
-            print(f"❌ Fallback str(): {len(result)} байт")
+            raw = str(rep)
+        obj = json.loads(raw)
+        return json.dumps(obj, ensure_ascii=False, indent=2).encode("utf-8")
     
-    print(f"ИТОГО: {len(result)} байт")
-    return result
+    if fmt == "Html":
+        # ВОЗВРАЩАЕМ БАЙТЫ UTF‑8, но внутри Python это СТРОКИ
+        html = rep.to_string() if hasattr(rep, "to_string") else str(rep)
+        return html.encode("utf-8")
+    
+    # Ods / Bcf
+    if hasattr(rep, "to_file"):
+        ext = ".ods" if fmt == "Ods" else ".bcf"
+        tmp_path = "/tmp/ids_report" + ext
+        rep.to_file(tmp_path)
+        with open(tmp_path, "rb") as f:
+            data = f.read()
+        os.remove(tmp_path)
+        print(f"{fmt}: {len(data)} байт через to_file()")
+        return data
+    
+    # резервный вариант
+    if hasattr(rep, "to_string"):
+        return rep.to_string().encode("utf-8")
+    return str(rep).encode("utf-8")
