@@ -10,8 +10,7 @@ const formatSelect = document.getElementById("format-select");
 const downloadBtn = document.getElementById("download-btn");
 const reportFrame = document.getElementById("report-frame");
 
-// последняя сгенерированная строка отчёта и формат
-let lastReportText = "";
+let lastReportData = null;
 let lastReportFormat = "Html";
 
 function log(text) {
@@ -24,11 +23,9 @@ async function initPyodideAndPackages() {
     indexURL: "https://cdn.jsdelivr.net/pyodide/v0.26.0/full/",
   });
   log("Pyodide загружен.");
-
   log("Загружаю пакет 'micropip' из Pyodide...");
   await pyodide.loadPackage("micropip");
   log("micropip загружен.");
-
   log("Загружаю Python-скрипт app.py...");
   const resp = await fetch("app.py");
   if (!resp.ok) {
@@ -38,11 +35,9 @@ async function initPyodideAndPackages() {
   const appCode = await resp.text();
   await pyodide.runPythonAsync(appCode);
   log("app.py загружен.");
-
   log("Устанавливаю ifcopenshell / odfpy / ifctester (может занять время)...");
   await pyodide.runPythonAsync("await init_packages()");
   log("Библиотеки установлены.");
-
   runBtn.disabled = false;
   log("Можно загружать IFC и IDS и запускать проверку.");
 }
@@ -86,12 +81,9 @@ runBtn.addEventListener("click", async () => {
     return;
   }
 
-  const format = formatSelect.value; // Html / Json / Ods / Bcf
+  const format = formatSelect.value;
   lastReportFormat = format;
-
-  log(
-    "Передаю IFC и IDS в Python и запускаю проверку (формат: " + format + ")..."
-  );
+  log("Передаю IFC и IDS в Python и запускаю проверку (формат: " + format + ")...");
 
   const pyIfcBytes = pyodide.toPy(ifcBytes);
   const pyIdsBytes = pyodide.toPy(idsBytes);
@@ -102,30 +94,28 @@ runBtn.addEventListener("click", async () => {
     pyodide.globals.set("_report_format", format);
 
     await pyodide.runPythonAsync(
-      "result_ids, report_text = validate_ifc_and_generate_report(_ifc_bytes, _ids_bytes, _report_format)"
+      "result_ids, report_data = validate_ifc_and_generate_report(_ifc_bytes, _ids_bytes, _report_format)"
     );
 
     const resultIds = pyodide.globals.get("result_ids").toJs();
-    lastReportText = pyodide.globals.get("report_text");
+    lastReportData = pyodide.globals.get("report_data");
 
     log("Результаты проверки IFC против IDS:");
-    log(
-      `  Спецификаций: ${resultIds.total_specs}, ` +
+    log(` Спецификаций: ${resultIds.total_specs}, ` +
         `пройдено: ${resultIds.passed_specs}, ` +
-        `провалено: ${resultIds.failed_specs}`
-    );
+        `провалено: ${resultIds.failed_specs}`);
 
-    // если HTML — показываем в iframe
     if (format === "Html") {
-      const blob = new Blob([lastReportText], { type: "text/html" });
+      const htmlString = lastReportData.toJs ? lastReportData.toJs() : String(lastReportData);
+      const blob = new Blob([htmlString], { type: "text/html" });
       const url = URL.createObjectURL(blob);
       reportFrame.src = url;
     } else {
-      // для других форматов очищаем iframe
       reportFrame.src = "about:blank";
     }
 
     downloadBtn.disabled = false;
+
   } catch (err) {
     console.error(err);
     log("Ошибка при валидации / генерации отчёта (см. консоль).");
@@ -136,38 +126,78 @@ runBtn.addEventListener("click", async () => {
   }
 });
 
-downloadBtn.addEventListener("click", () => {
-  if (!lastReportText) {
+downloadBtn.addEventListener("click", async () => {
+  if (!lastReportData) {
     log("Нет отчёта для скачивания. Сначала запустите проверку.");
     return;
   }
 
-  let mime = "text/plain";
-  let ext = "txt";
-
-  if (lastReportFormat === "Html") {
-    mime = "text/html";
-    ext = "html";
-  } else if (lastReportFormat === "Json") {
-    mime = "application/json";
-    ext = "json";
-  } else if (lastReportFormat === "Ods") {
-    mime = "application/vnd.oasis.opendocument.spreadsheet";
-    ext = "ods";
-  } else if (lastReportFormat === "Bcf") {
-    mime = "application/octet-stream";
-    ext = "bcf";
+  try {
+    if (lastReportFormat === "Html") {
+      const htmlString = lastReportData.toJs ? lastReportData.toJs() : String(lastReportData);
+      const blob = new Blob([htmlString], { type: "text/html" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "ids_report.html";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } else {
+      // Бинарные форматы: конвертируем через Python в Uint8Array
+      pyodide.globals.set("_report_data", lastReportData);
+      pyodide.globals.set("_report_format", lastReportFormat);
+      
+      const bytesResult = await pyodide.runPythonAsync(`
+        import io
+        if _report_format == "Json":
+          data = _report_data.tojson().encode('utf-8')
+        elif _report_format == "Ods":
+          buf = io.BytesIO()
+          _report_data.tofileobj(buf)
+          data = buf.getvalue()
+        elif _report_format == "Bcf":
+          buf = io.BytesIO()
+          _report_data.tofileobj(buf)
+          data = buf.getvalue()
+        else:
+          data = b""
+        data
+      `);
+      
+      let mime = "application/octet-stream";
+      let ext = "bin";
+      
+      if (lastReportFormat === "Json") {
+        mime = "application/json";
+        ext = "json";
+      } else if (lastReportFormat === "Ods") {
+        mime = "application/vnd.oasis.opendocument.spreadsheet";
+        ext = "ods";
+      } else if (lastReportFormat === "Bcf") {
+        ext = "bcf";
+      }
+      
+      if (bytesResult.byteLength > 0) {
+        const blob = new Blob([bytesResult], { type: mime });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "ids_report." + ext;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+      
+      pyodide.globals.delete("_report_data");
+      pyodide.globals.delete("_report_format");
+    }
+  } catch (err) {
+    console.error(err);
+    log("Ошибка при скачивании отчёта (см. консоль).");
   }
-
-  const blob = new Blob([lastReportText], { type: mime });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "ids_report." + ext;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
 });
 
 window.addEventListener("load", () => {
