@@ -53,9 +53,10 @@ body {
 }
 
 /* Последний блок (Результат) растягиваем на всю оставшуюся высоту */
-.controls-panel .panel-section:last-of-type {
+.controls-panel .panel-section:nth-last-of-type(2) {
+  /* предпоследний, т.к. последний теперь contacts */
   flex: 1;
-  min-height: 0; /* нужно для корректного flex‑скролла */
+  min-height: 0;
 }
 
 .panel-section h3 {
@@ -153,14 +154,24 @@ pre#output {
   margin-top: 4px;
   padding: 8px;
   background: #3a3a3a;
-  border: none;              /* рамка убрана */
+  border: none;
   color: #d9d9d9;
   font-size: 11px;
   line-height: 1.4;
-  flex: 1;                   /* занимать всю оставшуюся высоту секции */
+  flex: 1;
   min-height: 0;
   max-height: none;
   overflow: auto;
+}
+
+/* Контакты внизу левого блока */
+.contacts {
+  font-size: 11px;
+  color: #d9d9d9;
+  opacity: 0.8;
+  border-top: 1px solid #d9d9d9;
+  padding-top: 8px;
+  margin-top: 8px;
 }
 
 /* Правая область — светлая */
