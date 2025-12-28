@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>IFC/IDS анализатор (Pyodide + чистый HTML)</title>
+
+  <!-- Pyodide из CDN -->
+  <script
+    src="https://cdn.jsdelivr.net/pyodide/v0.26.0/full/pyodide.js"
+  ></script>
+
+  <!-- Стили приложения -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>IFC/IDS анализатор</h1>
+
+  <div class="row">
+    <label for="ifc-upload">IFC файл:</label>
+    <input type="file" id="ifc-upload" accept=".ifc" />
+  </div>
+
+  <div class="row">
+    <label for="ids-upload">IDS файл:</label>
+    <input type="file" id="ids-upload" accept=".ids,.xml" />
+  </div>
+
+  <div class="row">
+    <button id="run-btn" disabled>Запустить проверку</button>
+  </div>
+
+  <div class="row">
+    <label for="format-select">Формат отчёта:</label>
+    <select id="format-select">
+      <option value="Html">HTML</option>
+      <option value="Json">JSON</option>
+      <option value="Ods">ODS</option>
+      <option value="Bcf">BCF</option>
+    </select>
+    <button id="download-btn" disabled>Скачать отчёт</button>
+  </div>
+
+  <pre id="output"></pre>
+
+  <iframe id="report-frame"></iframe>
+
+  <!-- Логика приложения -->
+  <script src="main.js"></script>
+</body>
+</html>
