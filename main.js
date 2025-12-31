@@ -18,7 +18,7 @@ function log(text) {
 async function initPyodideAndPackages() {
     log("Загружаю Pyodide...");
     pyodide = await loadPyodide({
-        indexURL: "https://cdn.jsdelivr.net/pyodide/v0.26.0/full/",
+        indexURL: "https://cdn.jsdelivr.net/pyodide/dev/full/",
     });
     log("Pyodide загружен.");
     log("Загружаю пакет 'micropip' из Pyodide...");

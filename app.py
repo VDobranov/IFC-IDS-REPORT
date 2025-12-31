@@ -25,13 +25,18 @@ def _get_wheel_path(filename):
     return f"https://raw.githubusercontent.com/vdobranov/ifc-ids-report/main/wheels/{filename}"
 
 async def init_packages():
-    w_ifc_file = "ifcopenshell-0.8.2+d50e806-cp312-cp312-emscripten_3_1_58_wasm32.whl"
+    await micropip.install("shapely")
+    # w_ifc_file = "ifcopenshell-0.8.1+latest-cp312-cp312-emscripten_3_1_58_wasm32.whl"
+    w_ifc_file = "ifcopenshell-0.8.3+34a1bc6-cp313-cp313-emscripten_4_0_9_wasm32.whl"
     w_odf_file = "odfpy-1.4.2-py2.py3-none-any.whl"
+    w_itest_file = "ifctester-0.8.3-py3-none-any.whl"
     
     local_ifc = f"./wheels/{w_ifc_file}"
     remote_ifc = f"https://raw.githubusercontent.com/vdobranov/ifc-ids-report/main/wheels/{w_ifc_file}"
     local_odf = f"./wheels/{w_odf_file}"
     remote_odf = f"https://raw.githubusercontent.com/vdobranov/ifc-ids-report/main/wheels/{w_odf_file}"
+    local_itest = f"./wheels/{w_itest_file}"
+    remote_itest = f"https://raw.githubusercontent.com/vdobranov/ifc-ids-report/main/wheels/{w_itest_file}"
     
     print("ifcopenshell...")
     if not await _try_install(local_ifc):
@@ -43,12 +48,17 @@ async def init_packages():
             raise RuntimeError("Failed to install odfpy from local and remote sources")
     print("ifctester...")
     await micropip.install("ifctester")
+    # if not await _try_install(local_itest):
+    #     if not await _try_install(remote_itest):
+    #         raise RuntimeError("Failed to install ifctester from local and remote sources")
     
     global ifcopenshell, ifctester_ids, ifctester_reporter
     import ifcopenshell
+    import ifctester
     from ifctester import ids as ifctester_ids
     from ifctester import reporter as ifctester_reporter
     print("ifcopenshell:", ifcopenshell.__version__)
+    print("ifctester:", ifctester.__version__)
     return ifcopenshell, ifctester_ids, ifctester_reporter
 
 
