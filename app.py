@@ -47,10 +47,10 @@ async def init_packages():
         if not await _try_install(remote_odf):
             raise RuntimeError("Failed to install odfpy from local and remote sources")
     print("ifctester...")
-    await micropip.install("ifctester")
-    # if not await _try_install(local_itest):
-    #     if not await _try_install(remote_itest):
-    #         raise RuntimeError("Failed to install ifctester from local and remote sources")
+    # await micropip.install("ifctester")
+    if not await _try_install(local_itest):
+        if not await _try_install(remote_itest):
+            raise RuntimeError("Failed to install ifctester from local and remote sources")
     
     global ifcopenshell, ifctester_ids, ifctester_reporter
     import ifcopenshell
