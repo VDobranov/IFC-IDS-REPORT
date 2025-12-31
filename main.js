@@ -56,7 +56,6 @@ ifcInput.addEventListener("change", async (event) => {
     }
     const file = files[0];
     ifcBytes = await fileToBytes(file);
-    log(`IFC загружен (JS): ${file.name}`);
     downloadBtn.disabled = true;
 });
 
@@ -70,7 +69,6 @@ idsInput.addEventListener("change", async (event) => {
     }
     const file = files[0];
     idsBytes = await fileToBytes(file);
-    log(`IDS загружен (JS): ${file.name}`);
     downloadBtn.disabled = true;
 });
 

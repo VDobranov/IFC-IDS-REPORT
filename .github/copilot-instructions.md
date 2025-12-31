@@ -15,9 +15,18 @@ Architecture & dataflow
 
 Project-specific conventions & gotchas
 - `app.py:init_packages()` installs wheels via remote raw GitHub URLs. `wheels/` contains offline wheel references but is not used unless `init_packages()` is changed.
+  - Note: recent edits make init_packages() prefer ./wheels/*.whl (served by the local static server) before falling back to remote URLs.
+
 - Binary report path: `generate_report()` may call `rep.to_file(tmp_path)` and read `/tmp` — ensure the target Python environment supports this (Pyodide has a different FS model).
+  - Pyodide caveat: prefer returning bytes from generate_report() instead of relying on writing to /tmp. The front-end expects a bytes-like object (Uint8Array) named report_bytes when calling generate_report(); avoid OS-specific temp paths where possible.
+
 - Encoding: uploaded bytes are decoded with `errors="ignore"` and outputs are UTF-8; JSON uses `ensure_ascii=False` for Cyrillic.
 - Pyodide globals lifecycle: `main.js` sets and deletes globals. Follow that pattern to avoid memory leaks.
+
+Dev tips
+- If you add or update wheels, run a local static server and clear browser cache or append a cache‑busting query to pyodide/app imports.
+- For debugging, always log full exception objects in the browser console (console.error) — Pyodide stack traces are printed there.
+- Test report download flow with small sample files first (Html/Json), then ODS/BCF to validate binary handling.
 
 Debugging & developer workflows
 - Serve locally for testing:
