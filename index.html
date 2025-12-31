@@ -5,6 +5,8 @@
   <title>IFC-IDS-REPORT</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/pyodide/v0.26.0/full/pyodide.js"></script>
+  <!-- Inline favicon: dark background (#3a3a3a) with "IIR" in light color (#d9d9d9) -->
+  <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' fill='%233a3a3a'/><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-family='PT Sans, Arial, sans-serif' font-size='40' font-weight='500' fill='%23d9d9d9'>IIR</text></svg>">
 </head>
 <body>
   <div class="main-layout">
@@ -49,8 +51,31 @@
 
       <!-- Контакты внизу левого блока -->
       <div class="contacts">
-        Контакты: <a href="mailto:vy.dobranov@yandex.ru">Вячеслав Добранов</a>
-      </div>
+        <a href="mailto:vy.dobranov@yandex.ru" aria-label="Contact: Вячеслав Добранов">
+          <svg width="36" height="36" viewBox="0 0 2000 2000" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="1000" cy="1000" r="1000" fill="#D9D9D9"/>
+            <path d="M626 1494L192.987 744L1059.01 744L626 1494Z" fill="#3A3A3A"/>
+            <path d="M1374 507L1807.01 1257H940.987L1374 507Z" fill="#3A3A3A"/>
+          </svg>
+        </a>
+        <!-- "made-in" badge placed to the right of the logo, sized to match -->
+        <div class="made-in" aria-hidden="true">
+          <svg width="36" height="36" viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
+            <path d="M0 0H900V190H0V0Z" fill="#D9D9D9"/>
+            <path d="M0 410H900V600H0V410Z" fill="url(#pattern0_212_90)"/>
+            <defs>
+              <pattern id="pattern0_212_90" patternUnits="userSpaceOnUse" patternTransform="matrix(108.78 0 0 188.412 372.3 410)" preserveAspectRatio="none" viewBox="0 0 77.7 134.58" width="1" height="1">
+                <g id="pattern0_212_90_inner">
+                  <line x1="123.99" y1="7.5" x2="12.9904" y2="199.758" stroke="#D9D9D9" stroke-width="30"/>
+                </g>
+                <use xlink:href="#pattern0_212_90_inner" transform="translate(-77.7 -134.58)"/>
+                <use xlink:href="#pattern0_212_90_inner" transform="translate(0 -134.58)"/>
+                <use xlink:href="#pattern0_212_90_inner" transform="translate(-77.7 0)"/>
+              </pattern>
+            </defs>
+          </svg>
+         </div>
+       </div>
     </div>
 
     <div class="report-area">

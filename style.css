@@ -25,10 +25,11 @@ body {
 
 /* Левая панель ~38% — тёмная */
 .controls-panel {
+  position: relative; /* added for absolute badge placement */
   flex: 1;
   max-width: 40vw;
   background: #3a3a3a;
-  padding: 32px 24px;
+  padding: 24px 24px;
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -166,12 +167,34 @@ pre#output {
 
 /* Контакты внизу левого блока */
 .contacts {
+  display: flex;
+  justify-content: space-between; /* place logo left, badge right */
+  align-items: center;
   font-size: 11px;
   color: #d9d9d9;
-  opacity: 0.8;
-  /* border-top: 1px solid #d9d9d9; */
   padding-top: 8px;
-  margin-top: 8px;
+  margin-top: auto;     /* push contacts to the bottom of controls-panel */
+  width: 100%;
+  align-self: stretch;
+}
+
+/* ensure the left link and badge do not shrink */
+.contacts > a,
+.contacts > .made-in {
+  flex: 0 0 auto;
+}
+
+/* made-in sizing (unchanged except keep non-shrinking) */
+.made-in {
+  position: static;
+  /* width: 32px;
+  height: 32px; */
+  pointer-events: none;
+}
+.made-in svg {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 /* Правая область — светлая */

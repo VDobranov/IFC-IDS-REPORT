@@ -1,13 +1,46 @@
 import micropip
+import os
+
+async def _try_install(url):
+    """Try installing via micropip and return True on success, False on failure."""
+    try:
+        await micropip.install(url)
+        # treat relative ./wheels/... as "local" (served by local http server)
+        if url.startswith("./wheels/"):
+            print(f"  Using local: {url}")
+        else:
+            print(f"  Installed: {url}")
+        return True
+    except Exception as e:
+        print(f"  Install failed for {url}: {e}")
+        return False
+
+def _get_wheel_path(filename):
+    """Try local wheels/ dir first, fallback to remote URL."""
+    local_path = f"./wheels/{filename}"
+    if os.path.exists(local_path):
+        print(f"  Using local: {local_path}")
+        return local_path
+    # Fallback to remote
+    return f"https://raw.githubusercontent.com/vdobranov/ifc-ids-report/main/wheels/{filename}"
 
 async def init_packages():
-    w_ifc = "https://raw.githubusercontent.com/vdobranov/ifc-ids-report/main/wheels/ifcopenshell-0.8.2+d50e806-cp312-cp312-emscripten_3_1_58_wasm32.whl"
-    w_odf = "https://raw.githubusercontent.com/vdobranov/ifc-ids-report/main/wheels/odfpy-1.4.2-py2.py3-none-any.whl"
+    w_ifc_file = "ifcopenshell-0.8.2+d50e806-cp312-cp312-emscripten_3_1_58_wasm32.whl"
+    w_odf_file = "odfpy-1.4.2-py2.py3-none-any.whl"
+    
+    local_ifc = f"./wheels/{w_ifc_file}"
+    remote_ifc = f"https://raw.githubusercontent.com/vdobranov/ifc-ids-report/main/wheels/{w_ifc_file}"
+    local_odf = f"./wheels/{w_odf_file}"
+    remote_odf = f"https://raw.githubusercontent.com/vdobranov/ifc-ids-report/main/wheels/{w_odf_file}"
     
     print("ifcopenshell...")
-    await micropip.install(w_ifc)
+    if not await _try_install(local_ifc):
+        if not await _try_install(remote_ifc):
+            raise RuntimeError("Failed to install ifcopenshell from local and remote sources")
     print("odfpy...")
-    await micropip.install(w_odf)
+    if not await _try_install(local_odf):
+        if not await _try_install(remote_odf):
+            raise RuntimeError("Failed to install odfpy from local and remote sources")
     print("ifctester...")
     await micropip.install("ifctester")
     
