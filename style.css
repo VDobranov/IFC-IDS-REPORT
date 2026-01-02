@@ -189,7 +189,7 @@ pre#output {
   position: static;
   /* width: 32px;
   height: 32px; */
-  pointer-events: none;
+  /* pointer-events: none; */
 }
 .made-in svg {
   width: 100%;

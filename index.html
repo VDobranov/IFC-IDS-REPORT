@@ -1,88 +1,128 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head>
-  <meta charset="UTF-8" />
-  <title>IFC-IDS-REPORT</title>
-  <link rel="stylesheet" href="style.css" />
-  <script src="https://cdn.jsdelivr.net/pyodide/dev/full/pyodide.js"></script>
-  <!-- Inline favicon: dark background (#3a3a3a) with "IIR" in light color (#d9d9d9) -->
-  <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' fill='%233a3a3a'/><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-family='PT Sans, Arial, sans-serif' font-size='40' font-weight='500' fill='%23d9d9d9'>IIR</text></svg>">
-</head>
-<body>
-  <div class="main-layout">
-    <div class="controls-panel">
-      <h1>IFC-IDS-REPORT</h1>
+	<head>
+		<meta charset="UTF-8" />
+		<title>IFC-IDS-REPORT</title>
+		<link rel="stylesheet" href="style.css" />
+		<script src="https://cdn.jsdelivr.net/pyodide/dev/full/pyodide.js"></script>
+		<!-- Inline favicon: dark background (#3a3a3a) with "IIR" in light color (#d9d9d9) -->
+		<link
+			rel="icon"
+			href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' fill='%233a3a3a'/><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-family='PT Sans, Arial, sans-serif' font-size='40' font-weight='500' fill='%23d9d9d9'>IIR</text></svg>"
+		/>
+	</head>
+	<body>
+		<div class="main-layout">
+			<div class="controls-panel">
+				<h1>IFC-IDS-REPORT</h1>
 
-      <div class="panel-section">
-        <h3>Файлы для проверки</h3>
-        <div class="row">
-          <label for="ifc-upload">IFC файл:</label>
-          <input type="file" id="ifc-upload" accept=".ifc" />
-        </div>
-        <div class="row">
-          <label for="ids-upload">IDS файл:</label>
-          <input type="file" id="ids-upload" accept=".ids,.xml" />
-        </div>
-        <div class="row">
-          <button id="run-btn" disabled>Запустить валидацию</button>
-        </div>
-      </div>
+				<div class="panel-section">
+					<h3>Файлы для проверки</h3>
+					<div class="row">
+						<label for="ifc-upload">IFC файл:</label>
+						<input type="file" id="ifc-upload" accept=".ifc" />
+					</div>
+					<div class="row">
+						<label for="ids-upload">IDS файл:</label>
+						<input type="file" id="ids-upload" accept=".ids,.xml" />
+					</div>
+					<div class="row">
+						<button id="run-btn" disabled>Запустить валидацию</button>
+					</div>
+				</div>
 
-      <div class="panel-section">
-        <h3>Формат отчёта</h3>
-        <!-- <div class="row">
+				<div class="panel-section">
+					<h3>Формат отчёта</h3>
+					<!-- <div class="row">
           <label for="format-select">Формат:</label>
         </div> -->
-        <div class="row row-inline">
-          <select id="format-select">
-            <option value="Html">HTML</option>
-            <option value="Json">JSON</option>
-            <option value="Ods">ODS</option>
-            <option value="Bcf">BCF</option>
-          </select>
-          <button id="download-btn" disabled>Скачать отчёт</button>
-        </div>
-      </div>
+					<div class="row row-inline">
+						<select id="format-select">
+							<option value="Html">HTML</option>
+							<option value="Json">JSON</option>
+							<option value="Ods">ODS</option>
+							<option value="Bcf">BCF</option>
+						</select>
+						<button id="download-btn" disabled>Скачать отчёт</button>
+					</div>
+				</div>
 
-      <div class="panel-section">
-        <h3>Сообщения</h3>
-        <pre id="output"></pre>
-      </div>
+				<div class="panel-section">
+					<h3>Сообщения</h3>
+					<pre id="output"></pre>
+				</div>
 
-      <!-- Контакты внизу левого блока -->
-      <div class="contacts">
-        <a href="mailto:vy.dobranov@yandex.ru" aria-label="Contact: Вячеслав Добранов">
-          <svg width="36" height="36" viewBox="0 0 2000 2000" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="1000" cy="1000" r="1000" fill="#D9D9D9"/>
-            <path d="M626 1494L192.987 744L1059.01 744L626 1494Z" fill="#3A3A3A"/>
-            <path d="M1374 507L1807.01 1257H940.987L1374 507Z" fill="#3A3A3A"/>
-          </svg>
-        </a>
-        <!-- "made-in" badge placed to the right of the logo, sized to match -->
-        <div class="made-in" aria-hidden="true">
-          <svg width="36" height="36" viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
-            <path d="M0 0H900V190H0V0Z" fill="#D9D9D9"/>
-            <path d="M0 410H900V600H0V410Z" fill="url(#pattern0_212_90)"/>
-            <defs>
-              <pattern id="pattern0_212_90" patternUnits="userSpaceOnUse" patternTransform="matrix(108.78 0 0 188.412 372.3 410)" preserveAspectRatio="none" viewBox="0 0 77.7 134.58" width="1" height="1">
-                <g id="pattern0_212_90_inner">
-                  <line x1="123.99" y1="7.5" x2="12.9904" y2="199.758" stroke="#D9D9D9" stroke-width="30"/>
-                </g>
-                <use xlink:href="#pattern0_212_90_inner" transform="translate(-77.7 -134.58)"/>
-                <use xlink:href="#pattern0_212_90_inner" transform="translate(0 -134.58)"/>
-                <use xlink:href="#pattern0_212_90_inner" transform="translate(-77.7 0)"/>
-              </pattern>
-            </defs>
-          </svg>
-         </div>
-       </div>
-    </div>
+				<!-- Контакты внизу левого блока -->
+				<div class="contacts">
+					<a
+						href="mailto:vy.dobranov@yandex.ru"
+						aria-label="Contact: Вячеслав Добранов"
+					>
+						<svg
+							width="36"
+							height="36"
+							viewBox="0 0 2000 2000"
+							fill="none"
+							xmlns="http://www.w3.org/2000/svg"
+						>
+							<circle cx="1000" cy="1000" r="1000" fill="#D9D9D9" />
+							<path
+								d="M626 1494L192.987 744L1059.01 744L626 1494Z"
+								fill="#3A3A3A"
+							/>
+							<path
+								d="M1374 507L1807.01 1257H940.987L1374 507Z"
+								fill="#3A3A3A"
+							/>
+						</svg>
+					</a>
+					<!-- "made-in" badge placed to the right of the logo, sized to match -->
+					<a
+						href="https://ifcopenshell.org/"
+						class="made-in"
+						aria-label="Made with IfcOpenShell"
+            target="_blank"
+					>
+						<svg
+							width="36"
+							height="36"
+							viewBox="0 0 35 54"
+							version="1.1"
+							xmlns="http://www.w3.org/2000/svg"
+							xmlns:xlink="http://www.w3.org/1999/xlink"
+						>
+							<path
+								d="M8,33c2.98,0.089 3,0 3,0l0,-12l-3,0c-8.999,-2.362 -12.45,-16.194 0,-21l3,0l0,12c0,0 -1.923,-0.307 -3,0c-11.138,3.176 -10.267,16.975 0,21Z"
+								style="fill: #d9d9d9"
+							/>
+							<path
+								d="M19.905,21.187c-2.166,-0.113 -7,0 -7,0l0,12l9,0c12.034,2.167 21.247,12.942 2,20l-11,0l0,-12c0,0 9.913,0.269 11,0c18.139,-4.485 12.24,-19.149 -4,-20Z"
+								style="fill: #d9d9d9"
+							/>
+							<rect
+								x="31.799"
+								y="31"
+								width="3.201"
+								height="13"
+								style="fill: #d9d9d9"
+							/>
+							<rect
+								x="0"
+								y="11"
+								width="1.801"
+								height="11"
+								style="fill: #d9d9d9"
+							/>
+						</svg>
+					</a>
+				</div>
+			</div>
 
-    <div class="report-area">
-      <iframe id="report-frame"></iframe>
-    </div>
-  </div>
+			<div class="report-area">
+				<iframe id="report-frame"></iframe>
+			</div>
+		</div>
 
-  <script src="main.js"></script>
-</body>
+		<script src="main.js"></script>
+	</body>
 </html>
