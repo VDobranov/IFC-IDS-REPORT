@@ -27,9 +27,9 @@ def _get_wheel_path(filename):
 async def init_packages():
     await micropip.install("shapely")
     # w_ifc_file = "ifcopenshell-0.8.1+latest-cp312-cp312-emscripten_3_1_58_wasm32.whl"
-    w_ifc_file = "ifcopenshell-0.8.3+34a1bc6-cp313-cp313-emscripten_4_0_9_wasm32.whl"
+    w_ifc_file = "ifcopenshell-0.8.4+158fe92-cp313-cp313-pyodide_2025_0_wasm32.whl"
     w_odf_file = "odfpy-1.4.2-py2.py3-none-any.whl"
-    w_itest_file = "ifctester-0.8.3-py3-none-any.whl"
+    w_itest_file = "ifctester-0.8.5a260122-py3-none-any.whl"
     
     local_ifc = f"./wheels/{w_ifc_file}"
     remote_ifc = f"https://raw.githubusercontent.com/vdobranov/ifc-ids-report/main/wheels/{w_ifc_file}"
